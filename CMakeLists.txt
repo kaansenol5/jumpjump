@@ -13,6 +13,7 @@ add_executable(
     jumpjump
     src/main.cpp
     src/TextureManager.cpp
+    src/ECSManager.cpp
 )
 
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
