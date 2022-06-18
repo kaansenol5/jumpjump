@@ -17,19 +17,24 @@ int main(int argc, char* argv[]){
     const int frame_delay = 1000 / FPS;
     Uint32 frame_start;
     int frame_time;
-    entt::entity box = ecs_manager.registry.create();
-    SDL_Rect box_dimensions = {10, 10, 40, 40}; 
-    ecs_manager.registry.emplace<Transform>(box, box_dimensions, true);
-    ecs_manager.registry.emplace<PlayerController>(box);
+    entt::entity player = ecs_manager.registry.create();
+    SDL_Rect player_dimensions = {10, 10, 40, 40}; 
+    ecs_manager.registry.emplace<Transform>(player, player_dimensions, true);
+    ecs_manager.registry.emplace<PlayerController>(player);
     SDL_Texture* texture = TextureManager::load_image("assets/player.png");
     SDL_Rect texture_source_rect = {0, 0, 32, 32};
-    ecs_manager.registry.emplace<Texture>(box, texture, texture_source_rect);
-    ecs_manager.registry.emplace<Animations>(box, 32, 32, 4);
-    ecs_manager.registry.emplace<Hitbox>(box);
+    ecs_manager.registry.emplace<Texture>(player, texture, texture_source_rect);
+    ecs_manager.registry.emplace<Animations>(player, 32, 32, 4);
+    ecs_manager.registry.emplace<Hitbox>(player, true);
+    entt::entity box = ecs_manager.registry.create();
+    SDL_Rect box_dimensions = {500, 500, 100, 100};
+    ecs_manager.registry.emplace<Transform>(box, box_dimensions, true);
+    ecs_manager.registry.emplace<Hitbox>(box, true);
 
     while(!quit){
         frame_start = SDL_GetTicks();
         SDL_Event event;
+        SDL_PumpEvents(); //this line should be removed normally, but events dont work for some reason when removed
         SDL_PollEvent(&event);
         switch (event.type)
         {
@@ -50,3 +55,4 @@ int main(int argc, char* argv[]){
     }
     return 0;
 }
+
