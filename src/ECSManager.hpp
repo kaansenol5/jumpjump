@@ -3,7 +3,6 @@
 
 class ECSManager{
 public:
-    void update();  
+    void update();
     entt::registry registry;
-
 };
