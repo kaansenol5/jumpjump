@@ -3,6 +3,7 @@
 #include "EntityComponents/Transform.h"
 #include "EntityComponents/Animations.h"
 #include "EntityComponents/PlayerController.h"
+#include "EntityComponents/Hitbox.h"
 #include "TextureManager.hpp"
 
 void ECSManager::update(){
@@ -27,7 +28,24 @@ void ECSManager::update(){
         TextureManager::render(texture.texture, &texture.source_rect, &transform.rect);
     });
 
-    registry.view<PlayerController, Transform>().each([](auto entity, PlayerController& controller, Transform& transform){
+    registry.view<Hitbox, Transform>().each([this](auto entity, Hitbox& hitbox, Transform& transform){
+        Hitbox& current_hitbox = hitbox;
+        current_hitbox.is_colliding = false;
+        Transform& current_transform = transform;
+        registry.view<Hitbox, Transform>().each([&current_hitbox, &current_transform](auto entity, Hitbox& hitbox, Transform& transform){
+            if(&hitbox != &current_hitbox && &transform != &current_transform){
+                if(current_transform.rect.x + current_transform.rect.w >= transform.rect.x && current_transform.rect.x + current_transform.rect.w <= transform.rect.x + transform.rect.w){
+                    current_hitbox.is_colliding = true;
+                }
+                if(current_transform.rect.y + current_transform.rect.h >= transform.rect.y && current_transform.rect.y + current_transform.rect.h <= transform.rect.y + transform.rect.h){
+                    current_hitbox.is_colliding = true;
+                }
+            }
+    });});
+
+    registry.view<PlayerController, Transform>().each([this](auto entity, PlayerController& controller, Transform& transform){
+        Hitbox& player_hitbox = registry.get<Hitbox>(entity);
+        
         const Uint8* keys = SDL_GetKeyboardState(NULL);
         if (keys[SDL_SCANCODE_W]){
             transform.rect.y -= controller.velocity;
