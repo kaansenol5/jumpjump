@@ -105,6 +105,10 @@ public:
       SDL_SetRenderDrawColor(renderer, r, g, b, a);
       SDL_RenderClear(renderer);
   }
+
+  static inline void present(){
+      SDL_RenderPresent(renderer);
+  }
 private:
     static SDL_Window* window;
     static SDL_Renderer* renderer;
