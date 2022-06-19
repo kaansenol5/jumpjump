@@ -1,10 +1,10 @@
 #include "TextureManager.hpp"
 #include "ECSManager.hpp"
-#include "EntityComponents/Transform.h"
-#include "EntityComponents/Texture.h"
-#include "EntityComponents/Animations.h"
-#include "EntityComponents/PlayerController.h"
-#include "EntityComponents/Hitbox.h"
+#include "EntityComponents/Rendering/Transform.h"
+#include "EntityComponents/Rendering/Texture.h"
+#include "EntityComponents/Rendering/Animations.h"
+#include "EntityComponents/Controllers/PlayerController.h"
+#include "EntityComponents/Physics/Hitbox.h"
 
 int main(int argc, char* argv[]){
     SDL_Init(SDL_INIT_EVERYTHING);
