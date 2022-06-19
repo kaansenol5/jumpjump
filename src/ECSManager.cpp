@@ -1,10 +1,12 @@
 #include "ECSManager.hpp"
-#include "EntityComponents/Texture.h"
-#include "EntityComponents/Transform.h"
-#include "EntityComponents/Animations.h"
-#include "EntityComponents/PlayerController.h"
-#include "EntityComponents/Hitbox.h"
+#include "EntityComponents/Rendering/Texture.h"
+#include "EntityComponents/Rendering/Transform.h"
+#include "EntityComponents/Rendering/Animations.h"
+#include "EntityComponents/Controllers/PlayerController.h"
+#include "EntityComponents/Physics/Hitbox.h"
 #include "TextureManager.hpp"
+
+ECSManager::ECSManager() : physics(registry){}
 
 void ECSManager::update(){
     registry.view<Transform>(entt::exclude<Texture>).each([](auto entity, Transform& transform){
@@ -32,16 +34,16 @@ void ECSManager::update(){
     registry.view<PlayerController, Transform>().each([this](auto entity, PlayerController& controller, Transform& transform){
         const Uint8* keys = SDL_GetKeyboardState(NULL);
         if (keys[SDL_SCANCODE_W]){
-            transform.rect.y -= controller.velocity;
+            physics.move(entity, 0, controller.velocity * -1);
         }
         if (keys[SDL_SCANCODE_S]){
-            transform.rect.y += controller.velocity;
+            physics.move(entity, 0, controller.velocity * 1);
         }
         if (keys[SDL_SCANCODE_A]){
-            transform.rect.x -= controller.velocity;
+            physics.move(entity, controller.velocity * -1, 0);
         }
         if (keys[SDL_SCANCODE_D]){
-            transform.rect.x += controller.velocity;
+            physics.move(entity, controller.velocity * 1, 0);
         }
         if (keys[SDL_SCANCODE_SPACE] && !controller.is_jumping){
             controller.is_jumping = true;
@@ -50,17 +52,18 @@ void ECSManager::update(){
             unsigned jumphalf = controller.jump_lenght / 2;
             if (controller.jumped_lenght < jumphalf){
                 controller.jumped_lenght++;
-                transform.rect.y -= controller.velocity;
+                physics.move(entity, 0, controller.velocity * -1);
             }
             else{
                 controller.jumped_lenght++;
-                transform.rect.y += controller.velocity;
+                physics.move(entity, 0, controller.velocity * 1);
             }
             if (controller.jumped_lenght >= controller.jump_lenght){
                 controller.is_jumping = false;
                 controller.jumped_lenght = 0;
             }
         }
+        
     });
 
 }
