@@ -65,5 +65,5 @@ void ECSManager::update(){
         }
         
     });
-
+    physics.update_gravity();
 }

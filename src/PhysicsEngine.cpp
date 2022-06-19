@@ -1,11 +1,14 @@
 #include "PhysicsEngine.hpp"
 #include "EntityComponents/Physics/Hitbox.h"
+#include "EntityComponents/Physics/Gravity.h"
 #include "EntityComponents/Rendering/Transform.h"
 
 PhysicsEngine::PhysicsEngine(entt::registry& registry) : registry(registry){}
 
 void PhysicsEngine::update_gravity(){
-
+    registry.view<Gravity, Transform>().each([this](entt::entity entity, Gravity& gravity, Transform& transform){
+        move(entity, 0, gravity.force);
+    });
 }
 bool PhysicsEngine::update_collision(){
     // this gets executed multiple times per frame
