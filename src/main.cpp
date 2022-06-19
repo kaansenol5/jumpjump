@@ -5,7 +5,7 @@
 #include "EntityComponents/Rendering/Animations.h"
 #include "EntityComponents/Controllers/PlayerController.h"
 #include "EntityComponents/Physics/Hitbox.h"
-
+#include "EntityComponents/Physics/Gravity.h"
 int main(int argc, char* argv[]){
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(IMG_INIT_PNG);
@@ -26,6 +26,7 @@ int main(int argc, char* argv[]){
     ecs_manager.registry.emplace<Texture>(player, texture, texture_source_rect);
     ecs_manager.registry.emplace<Animations>(player, 32, 32, 4);
     ecs_manager.registry.emplace<Hitbox>(player, true);
+    ecs_manager.registry.emplace<Gravity>(player);
     entt::entity box = ecs_manager.registry.create();
     SDL_Rect box_dimensions = {500, 500, 100, 100};
     ecs_manager.registry.emplace<Transform>(box, box_dimensions, true);
