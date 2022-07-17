@@ -1,15 +1,52 @@
 #include "PhysicsEngine.hpp"
 #include "EntityComponents/Physics/Hitbox.h"
-#include "EntityComponents/Physics/Gravity.h"
+#include "EntityComponents/Physics/Core.h"
 #include "EntityComponents/Rendering/Transform.h"
-
+#include "EntityComponents/Physics/Movement.h"
 PhysicsEngine::PhysicsEngine(entt::registry& registry) : registry(registry){}
 
-void PhysicsEngine::update_gravity(){
-    registry.view<Gravity, Transform>().each([this](entt::entity entity, Gravity& gravity, Transform& transform){
-        move(entity, 0, gravity.force);
+void PhysicsEngine::update_movements(){
+    registry.view<Core, Movement, Transform>().each([this](entt::entity entity, Core& core, Movement& movement, Transform& transform){
+        if(core.gravity){
+          //  core.total_force_y += core.mass * gravity;
+        }
+        movement.acceleration_x = core.total_force_x / core.mass;
+        movement.acceleration_y = core.total_force_y / core.mass;
+        movement.velocity_x += movement.acceleration_x;
+        movement.velocity_y += movement.acceleration_y;
+        if(core.total_force_x != 0){
+            //float u = 
+           // float friction = u * abs(core.total_force_x);
+            if(core.total_force_x < 0){
+                core.total_force_x += core.total_force_x / 2;
+            }
+            else{
+                core.total_force_x -= core.total_force_x  / 2;
+            }
+        }
+        if(core.total_force_y != 0){
+            float friction = 0.5f * abs(core.total_force_y);
+            if(core.total_force_y < 0){
+                core.total_force_y += friction;
+            }
+            else{
+                core.total_force_y -= friction;
+            }
+        }
+        move(entity, movement.velocity_x, movement.velocity_y);
     });
 }
+
+void PhysicsEngine::add_force(entt::entity entity, int xd, int yd){
+    Core& core = registry.get<Core>(entity);
+    if(abs(core.total_force_x + xd) <= core.max_force){
+        core.total_force_x += xd;
+    }
+    if(abs(core.total_force_y + yd) <= core.max_force){
+        core.total_force_y += yd;
+    }
+}
+
 bool PhysicsEngine::update_collision(){
     // this gets executed multiple times per frame
     // this gets executed after every move call, for example

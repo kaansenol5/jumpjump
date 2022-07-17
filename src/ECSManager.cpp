@@ -34,16 +34,16 @@ void ECSManager::update(){
     registry.view<PlayerController, Transform>().each([this](auto entity, PlayerController& controller, Transform& transform){
         const Uint8* keys = SDL_GetKeyboardState(NULL);
         if (keys[SDL_SCANCODE_W]){
-            physics.move(entity, 0, controller.velocity * -1);
+            physics.add_force(entity, 0, controller.force * -1);
         }
         if (keys[SDL_SCANCODE_S]){
-            physics.move(entity, 0, controller.velocity * 1);
+            physics.add_force(entity, 0, controller.force * 1);
         }
         if (keys[SDL_SCANCODE_A]){
-            physics.move(entity, controller.velocity * -1, 0);
+            physics.add_force(entity, controller.force * -1, 0);
         }
         if (keys[SDL_SCANCODE_D]){
-            physics.move(entity, controller.velocity * 1, 0);
+            physics.add_force(entity, controller.force * 1, 0);
         }
         if (keys[SDL_SCANCODE_SPACE] && !controller.is_jumping){
             controller.is_jumping = true;
@@ -52,11 +52,11 @@ void ECSManager::update(){
             unsigned jumphalf = controller.jump_lenght / 2;
             if (controller.jumped_lenght < jumphalf){
                 controller.jumped_lenght++;
-                physics.move(entity, 0, controller.velocity * -1);
+                physics.move(entity, 0, controller.force * -1);
             }
             else{
                 controller.jumped_lenght++;
-                physics.move(entity, 0, controller.velocity * 1);
+                physics.move(entity, 0, controller.force * 1);
             }
             if (controller.jumped_lenght >= controller.jump_lenght){
                 controller.is_jumping = false;
@@ -65,5 +65,5 @@ void ECSManager::update(){
         }
         
     });
-    physics.update_gravity();
+    physics.update_movements();
 }
