@@ -2,7 +2,7 @@
 #include "TextureManager.hpp"
 
 char* OnScreenDebugger::fontname = "assets/font.ttf";
-int OnScreenDebugger::ptsize = 32;
+int OnScreenDebugger::ptsize = 24;
 SDL_Color OnScreenDebugger::color = {255,255,255,150};
 char OnScreenDebugger::screen[80][80];
 
@@ -21,8 +21,11 @@ void OnScreenDebugger::print(char* text, bool newline){
             if(screen[i][j] == '~'){
                 if(current_char == strlen(text)){
                     if(newline){
-                        screen[i][j] = '|';
+                        for(int a = j; a<80; a++){
+                            screen[i][a] = '|';
+                        }
                     }
+                    return;
                 }
                 else{
                     screen[i][j] = text[current_char];
@@ -38,7 +41,7 @@ void OnScreenDebugger::draw(){
         for(int j = 0; j < 80; j++){
             if(screen[i][j] != '~' && screen[i][j] != '|'){
                 SDL_Rect rect = {j * ptsize, i * ptsize, ptsize, ptsize};
-                char txt[2] = "a";  // WTF IS THIS
+                char txt[2];  // WTF IS THIS
                 txt[0] = screen[i][j];  
                 SDL_Texture* text = TextureManager::load_ttf_font(fontname, txt, ptsize, color);
                 TextureManager::render(text, nullptr, &rect);
