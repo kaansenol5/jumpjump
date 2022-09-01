@@ -15,7 +15,7 @@ add_executable(
     src/TextureManager.cpp
     src/ECSManager.cpp
     src/PhysicsEngine.cpp
-   # src/OnScreenDebugger.cpp
+    src/OnScreenDebugger.cpp
 )
 
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})

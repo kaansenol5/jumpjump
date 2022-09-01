@@ -5,13 +5,12 @@
 
 class OnScreenDebugger{
 public:
-    OnScreenDebugger();
-    void refresh();
-    void print(char* text, bool newline = true);
-    void draw();
+    static void refresh();
+    static void print(char* text, bool newline = true);
+    static void draw();
 private:
-    char* fontname = "assets/font.ttf";
-    int ptsize = 8;
-    char screen[80][80];
-    SDL_Color color = {255,255,255,255};
+    static char* fontname;
+    static int ptsize;
+    static char screen[80][80];
+    static SDL_Color color;
 };

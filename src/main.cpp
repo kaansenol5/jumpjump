@@ -7,6 +7,7 @@
 #include "EntityComponents/Physics/Hitbox.h"
 #include "EntityComponents/Physics/Core.h"
 #include "EntityComponents/Physics/Movement.h"
+#include "OnScreenDebugger.hpp"
 int main(int argc, char* argv[]){
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(IMG_INIT_PNG);
@@ -45,13 +46,12 @@ int main(int argc, char* argv[]){
         default:
             break;
         }
-
+        OnScreenDebugger::refresh();
         TextureManager::clear(0, 255, 0, 255);
         ecs_manager.update();
-        //TextureManager::debugger.print("Hello World");
-        //TextureManager::debugger.draw();
+        OnScreenDebugger::print("HELLO");
+        OnScreenDebugger::draw();
         TextureManager::present();
-        //TextureManager::debugger.refresh();
         frame_time = SDL_GetTicks() - frame_start;
         if(frame_delay > frame_time){
             SDL_Delay(frame_delay - frame_time);
