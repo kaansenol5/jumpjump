@@ -6,7 +6,7 @@
 class OnScreenDebugger{
 public:
     static void refresh();
-    static void print(char* text, bool newline = true);
+    static void print(const char* text, bool newline = true);
     static void draw();
     static bool enabled;
 private:

@@ -5,7 +5,9 @@ char* OnScreenDebugger::fontname = "assets/font.ttf";
 int OnScreenDebugger::ptsize = 24;
 SDL_Color OnScreenDebugger::color = {255,255,255,150};
 char OnScreenDebugger::screen[80][80];
-bool OnScreenDebugger::enabled = false;
+bool OnScreenDebugger::enabled = true;
+
+
 void OnScreenDebugger::refresh(){
     for(unsigned i = 0; i < 80; i++){
         for(unsigned j = 0; j < 80; j++){
@@ -14,7 +16,7 @@ void OnScreenDebugger::refresh(){
     }
 }
 
-void OnScreenDebugger::print(char* text, bool newline){
+void OnScreenDebugger::print(const char* text, bool newline){
     int current_char = 0;
     for(unsigned i = 0; i < 80; i++){
         for(unsigned j = 0; j < 80; j++){

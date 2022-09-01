@@ -64,15 +64,17 @@ int main(int argc, char* argv[]){
         OnScreenDebugger::refresh();
         TextureManager::clear(0, 255, 0, 255);
         ecs_manager.update();
-        OnScreenDebugger::print("HELLO ", false);
-        OnScreenDebugger::print("WORLD");
-        OnScreenDebugger::print("nice");
         OnScreenDebugger::draw();
-        TextureManager::present();
         frame_time = SDL_GetTicks() - frame_start;
         if(frame_delay > frame_time){
+            int fps = 1000.0 / (double) frame_delay - frame_time;
+            std::string fps_char = std::to_string(fps);
+            OnScreenDebugger::print("FPS: ", false);
+            OnScreenDebugger::print(fps_char.c_str());
             SDL_Delay(frame_delay - frame_time);
         }
+        OnScreenDebugger::draw();
+        TextureManager::present();
     }
     return 0;
 }
