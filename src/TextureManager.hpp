@@ -11,6 +11,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include "OnScreenDebugger.hpp"
 /* 
 ALL OF THE FUNCTIONS ASSUMES THAT SDL_Init(), TTF_Init() and IMG_Init were called earlier
 */
@@ -18,6 +19,7 @@ ALL OF THE FUNCTIONS ASSUMES THAT SDL_Init(), TTF_Init() and IMG_Init were calle
 
 class TextureManager{
 public:
+   // static OnScreenDebugger debugger;
     static inline int init_windowing(char* title, int width, int height){
         window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
         if (window == NULL){

@@ -29,10 +29,7 @@ int main(int argc, char* argv[]){
     ecs_manager.registry.emplace<Hitbox>(player, true);
     ecs_manager.registry.emplace<Core>(player);
     ecs_manager.registry.emplace<Movement>(player);
-    entt::entity box = ecs_manager.registry.create();
-    SDL_Rect box_dimensions = {0, 500, 1000, 100};
-    ecs_manager.registry.emplace<Transform>(box, box_dimensions, true);
-    ecs_manager.registry.emplace<Hitbox>(box, true);
+
 
     while(!quit){
         frame_start = SDL_GetTicks();
@@ -48,9 +45,13 @@ int main(int argc, char* argv[]){
         default:
             break;
         }
-        TextureManager::clear(0, 0, 0, 255);
+
+        TextureManager::clear(0, 255, 0, 255);
         ecs_manager.update();
+        //TextureManager::debugger.print("Hello World");
+        //TextureManager::debugger.draw();
         TextureManager::present();
+        //TextureManager::debugger.refresh();
         frame_time = SDL_GetTicks() - frame_start;
         if(frame_delay > frame_time){
             SDL_Delay(frame_delay - frame_time);
