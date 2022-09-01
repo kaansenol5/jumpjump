@@ -5,7 +5,7 @@ char* OnScreenDebugger::fontname = "assets/font.ttf";
 int OnScreenDebugger::ptsize = 24;
 SDL_Color OnScreenDebugger::color = {255,255,255,150};
 char OnScreenDebugger::screen[80][80];
-
+bool OnScreenDebugger::enabled = false;
 void OnScreenDebugger::refresh(){
     for(unsigned i = 0; i < 80; i++){
         for(unsigned j = 0; j < 80; j++){
@@ -44,7 +44,8 @@ void OnScreenDebugger::draw(){
                 char txt[2];  // WTF IS THIS
                 txt[0] = screen[i][j];  
                 SDL_Texture* text = TextureManager::load_ttf_font(fontname, txt, ptsize, color);
-                TextureManager::render(text, nullptr, &rect);
+                if(enabled)
+                    TextureManager::render(text, nullptr, &rect);
             }
         }
     }

@@ -8,6 +8,7 @@ public:
     static void refresh();
     static void print(char* text, bool newline = true);
     static void draw();
+    static bool enabled;
 private:
     static char* fontname;
     static int ptsize;
