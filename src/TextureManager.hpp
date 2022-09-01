@@ -11,6 +11,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <map>
 #include "OnScreenDebugger.hpp"
 /* 
 ALL OF THE FUNCTIONS ASSUMES THAT SDL_Init(), TTF_Init() and IMG_Init were called earlier
@@ -19,13 +20,13 @@ ALL OF THE FUNCTIONS ASSUMES THAT SDL_Init(), TTF_Init() and IMG_Init were calle
 
 class TextureManager{
 public:
-   // static OnScreenDebugger debugger;
     static inline int init_windowing(char* title, int width, int height){
         window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
         if (window == NULL){
             return 1;
         }
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         if (renderer == NULL){
             return 1;
         }
@@ -47,12 +48,17 @@ public:
     }
 
     static inline SDL_Texture* load_ttf_font(const char* font_file, const char* text, const int ptsize, const SDL_Color color){
-        TTF_Font* loaded_font = TTF_OpenFont(font_file, ptsize);
-        if(!loaded_font){
+        if (fonts_cache.find(ptsize) != fonts_cache.end())
+            {
+                // Font not yet opened. Open and store it.
+                fonts_cache[ptsize] = TTF_OpenFont(font_file,ptsize);
+                // TODO: error checking...
+            }
+        if(!fonts_cache[ptsize]){
             std::cout << "Failed loading font by TextureManager::load_ttf_font() , font file name: " << font_file << std::endl;
             std::cout << "Error Code: " << TTF_GetError() << std::endl;
         }
-        SDL_Surface* temp_surface = TTF_RenderText_Solid(loaded_font, text, color);
+        SDL_Surface* temp_surface = TTF_RenderText_Solid(fonts_cache[ptsize], text, color);
         if(!temp_surface){
             std::cout << "TTF_RenderText_Solid() failed, Error Code: " << SDL_GetError() << std::endl;
         }
@@ -62,14 +68,13 @@ public:
             std::cout << "Error Code: " << SDL_GetError() << std::endl;
         }
         SDL_FreeSurface(temp_surface);
-        TTF_CloseFont(loaded_font);
         return texture;
     }
 
     static inline bool check_bounds(SDL_Rect* dest){
         int width, height;
         SDL_GetWindowSize(window, &width, &height);
-        if(dest->x > 0 && dest->x < width && dest->y > 0 && dest->y < height){
+        if(dest->x >= 0 && dest->x <= width && dest->y >= 0 && dest->y <= height){
             return true;
         }
         else{
@@ -114,4 +119,5 @@ public:
 private:
     static SDL_Window* window;
     static SDL_Renderer* renderer;
+    static std::map<int, TTF_Font*> fonts_cache;
 };

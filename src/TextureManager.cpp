@@ -2,4 +2,4 @@
 
 SDL_Window* TextureManager::window = nullptr;
 SDL_Renderer* TextureManager::renderer = nullptr;
-//OnScreenDebugger TextureManager::debugger;
+std::map<int, TTF_Font*> TextureManager::fonts_cache;
