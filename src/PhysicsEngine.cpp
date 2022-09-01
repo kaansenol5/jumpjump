@@ -12,20 +12,40 @@ void PhysicsEngine::update_movements(){
         }
         movement.acceleration_x = core.total_force_x / core.mass;
         movement.acceleration_y = core.total_force_y / core.mass;
-        movement.velocity_x += movement.acceleration_x;
-        movement.velocity_y += movement.acceleration_y;
-        if(core.total_force_x != 0){
+        if(abs(movement.velocity_x + movement.acceleration_x) <= movement.max_velocity){
+            movement.velocity_x += movement.acceleration_x;
+        }
+        if(abs(movement.velocity_y + movement.acceleration_y) <= movement.max_velocity){
+            movement.velocity_y += movement.acceleration_y;
+        }
+        if(movement.velocity_x != 0){
             //float u = 
            // float friction = u * abs(core.total_force_x);
-            if(core.total_force_x < 0){
-                core.total_force_x += core.total_force_x / 2;
+            if(movement.velocity_x < 0){
+                movement.velocity_x += friction;
             }
             else{
-                core.total_force_x -= core.total_force_x  / 2;
+                movement.velocity_x -= friction;
+            }
+        }
+        if(movement.velocity_y != 0){
+
+            if(movement.velocity_y < 0){
+                movement.velocity_y += friction;
+            }
+            else{
+                movement.velocity_y -= friction;
+            }
+        }
+        if(core.total_force_x != 0){
+            if(core.total_force_x < 0){
+                core.total_force_x += friction;
+            }
+            else{
+                core.total_force_x -= friction;
             }
         }
         if(core.total_force_y != 0){
-            float friction = 0.5f * abs(core.total_force_y);
             if(core.total_force_y < 0){
                 core.total_force_y += friction;
             }
