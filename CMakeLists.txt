@@ -16,6 +16,7 @@ add_executable(
     src/ECSManager.cpp
     src/PhysicsEngine.cpp
     src/OnScreenDebugger.cpp
+    src/LevelManager.cpp
 )
 
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
