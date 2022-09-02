@@ -55,8 +55,8 @@ int main(int argc, char* argv[]){
         if(frame_delay > frame_time){
             int fps = 1000.0 / (double) frame_delay - frame_time;
             std::string fps_char = std::to_string(fps);
-            OnScreenDebugger::print("FPS: ", false);
-            OnScreenDebugger::print(fps_char.c_str());
+            OnScreenDebugger::print("FPS: ");
+            OnScreenDebugger::print(fps_char.c_str(), false);
             SDL_Delay(frame_delay - frame_time);
         }
         OnScreenDebugger::draw();

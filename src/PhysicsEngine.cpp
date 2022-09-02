@@ -3,6 +3,8 @@
 #include "EntityComponents/Physics/Core.h"
 #include "EntityComponents/Rendering/Transform.h"
 #include "EntityComponents/Physics/Movement.h"
+#include "OnScreenDebugger.hpp"
+
 PhysicsEngine::PhysicsEngine(entt::registry& registry) : registry(registry){}
 
 void PhysicsEngine::update_movements(){
@@ -10,6 +12,10 @@ void PhysicsEngine::update_movements(){
         if(core.gravity){
           //  core.total_force_y += core.mass * gravity;
         }
+        OnScreenDebugger::print("FORCE_X: ");
+        OnScreenDebugger::print(std::to_string(core.total_force_x).c_str(), false);
+        OnScreenDebugger::print("FORCE_Y: ");
+        OnScreenDebugger::print(std::to_string(core.total_force_y).c_str(), false);
         movement.acceleration_x = core.total_force_x / core.mass;
         movement.acceleration_y = core.total_force_y / core.mass;
         if(abs(movement.velocity_x + movement.acceleration_x) <= movement.max_velocity){
@@ -53,6 +59,10 @@ void PhysicsEngine::update_movements(){
                 core.total_force_y -= friction;
             }
         }
+        OnScreenDebugger::print("SPEED_X: ");
+        OnScreenDebugger::print(std::to_string(movement.velocity_x).c_str(), false);
+        OnScreenDebugger::print("SPEED_Y: ");
+        OnScreenDebugger::print(std::to_string(movement.velocity_y).c_str(), false);
         move(entity, movement.velocity_x, movement.velocity_y);
     });
 }

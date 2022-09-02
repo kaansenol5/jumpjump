@@ -2,53 +2,34 @@
 #include "TextureManager.hpp"
 
 char* OnScreenDebugger::fontname = "assets/font.ttf";
-int OnScreenDebugger::ptsize = 24;
+int OnScreenDebugger::ptsize = 14;
 SDL_Color OnScreenDebugger::color = {255,255,255,150};
-char OnScreenDebugger::screen[80][80];
+std::vector<std::string> OnScreenDebugger::screen;
 bool OnScreenDebugger::enabled = true;
 
 
 void OnScreenDebugger::refresh(){
-    for(unsigned i = 0; i < 80; i++){
-        for(unsigned j = 0; j < 80; j++){
-            screen[i][j] = '~';
-        }
-    }
+    screen = {""};
 }
 
-void OnScreenDebugger::print(const char* text, bool newline){
-    int current_char = 0;
-    for(unsigned i = 0; i < 80; i++){
-        for(unsigned j = 0; j < 80; j++){
-            if(screen[i][j] == '~'){
-                if(current_char == strlen(text)){
-                    if(newline){
-                        for(int a = j; a<80; a++){
-                            screen[i][a] = '|';
-                        }
-                    }
-                    return;
-                }
-                else{
-                    screen[i][j] = text[current_char];
-                    current_char++;
-                }
-            }
-        }
+void OnScreenDebugger::print(std::string text, bool newline){
+    if(newline){
+        screen.push_back(text);
+    }
+    else{
+        screen.back().append(text);
     }
 }
 
 void OnScreenDebugger::draw(){
-    for(int i = 0; i < 80; i++){
-        for(int j = 0; j < 80; j++){
-            if(screen[i][j] != '~' && screen[i][j] != '|'){
-                SDL_Rect rect = {j * ptsize, i * ptsize, ptsize, ptsize};
-                char txt[2];  // WTF IS THIS
-                txt[0] = screen[i][j];  
-                SDL_Texture* text = TextureManager::load_ttf_font(fontname, txt, ptsize, color);
-                if(enabled)
-                    TextureManager::render(text, nullptr, &rect);
-            }
-        }
+    if(!enabled){
+        return;
+    }
+    int size = screen.size();
+    for(int i = 0; i < size; i++){
+        std::string& line = screen[i]; 
+        SDL_Rect rect = {10, i* ptsize, ptsize * line.size(), ptsize};
+        SDL_Texture* texture = TextureManager::load_ttf_font(fontname, line.c_str(), 128, color);
+        TextureManager::render(texture, nullptr, &rect);
     }
 }
