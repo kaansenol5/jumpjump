@@ -21,11 +21,18 @@ void LevelManager::load_level_one(){
     registry -> emplace<PlayerController>(player);
     SDL_Texture* texture = TextureManager::load_image("assets/player.png");
     SDL_Rect texture_source_rect = {0, 0, 32, 32};
-  //  ecs_manager.registry.emplace<Texture>(player, texture, texture_source_rect);
-    //ecs_manager.registry.emplace<Animations>(player, 32, 32, 4);
+   // registry -> emplace<Texture>(player, texture, texture_source_rect);
+   // registry -> emplace<Animations>(player, 32, 32, 4);
     registry -> emplace<Hitbox>(player, true);
     registry -> emplace<Core>(player);
     registry -> emplace<Movement>(player);
+    
+    entt::entity box = registry -> create();
+    SDL_Rect box_dimensions = {400, 410, 40, 40};
+    registry->emplace<Transform>(box, box_dimensions);
+    registry->emplace<Hitbox>(box, false);
+    registry->emplace<Movement>(box);
+    registry -> emplace<Core>(box);
 }
 
 void LevelManager::reset(){

@@ -60,7 +60,7 @@ public:
         }
         SDL_Surface* temp_surface = TTF_RenderText_Solid(fonts_cache[ptsize], text, color);
         if(!temp_surface){
-            std::cout << "TTF_RenderText_Solid() failed, Error Code: " << SDL_GetError() << std::endl;
+            std::cout << "Surface Generation TTF_RenderText_Solid() failed, Error Code: " << SDL_GetError() << std::endl;
         }
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, temp_surface);        
         if (!texture){
