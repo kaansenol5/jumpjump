@@ -4,6 +4,7 @@
 #include "EntityComponents/Rendering/Transform.h"
 #include "EntityComponents/Physics/Movement.h"
 #include "OnScreenDebugger.hpp"
+#include <iostream>
 
 PhysicsEngine::PhysicsEngine(entt::registry& registry) : registry(registry){}
 
@@ -12,10 +13,6 @@ void PhysicsEngine::update_movements(){
         if(core.gravity){
           //  core.total_force_y += core.mass * gravity;
         }
-        OnScreenDebugger::print("FORCE_X: ");
-        OnScreenDebugger::print(std::to_string(core.total_force_x).c_str(), false);
-        OnScreenDebugger::print("FORCE_Y: ");
-        OnScreenDebugger::print(std::to_string(core.total_force_y).c_str(), false);
         movement.acceleration_x = core.total_force_x / core.mass;
         movement.acceleration_y = core.total_force_y / core.mass;
         if(abs(movement.velocity_x + movement.acceleration_x) <= movement.max_velocity){
@@ -25,8 +22,6 @@ void PhysicsEngine::update_movements(){
             movement.velocity_y += movement.acceleration_y;
         }
         if(movement.velocity_x != 0){
-            //float u = 
-           // float friction = u * abs(core.total_force_x);
             if(movement.velocity_x < 0){
                 movement.velocity_x += friction;
             }
@@ -59,12 +54,9 @@ void PhysicsEngine::update_movements(){
                 core.total_force_y -= friction;
             }
         }
-        OnScreenDebugger::print("SPEED_X: ");
-        OnScreenDebugger::print(std::to_string(movement.velocity_x).c_str(), false);
-        OnScreenDebugger::print("SPEED_Y: ");
-        OnScreenDebugger::print(std::to_string(movement.velocity_y).c_str(), false);
         move(entity, movement.velocity_x, movement.velocity_y);
     });
+    
 }
 
 void PhysicsEngine::add_force(entt::entity entity, int xd, int yd){
@@ -77,41 +69,34 @@ void PhysicsEngine::add_force(entt::entity entity, int xd, int yd){
     }
 }
 
-bool PhysicsEngine::update_collision(){
-    // this gets executed multiple times per frame
-    // this gets executed after every move call, for example
-    bool collide = false;
-    registry.view<Hitbox>().each([this, &collide](auto entity1, Hitbox& h1){
-        registry.view<Hitbox>().each([this, &collide, entity1](auto entity2, Hitbox& h2){
-            if (entity1 != entity2){
-                collide = check_collision(entity1, entity2);
+void PhysicsEngine::move(entt::entity entity, int xd, int yd){ 
+    Transform& transform = registry.get<Transform>(entity);
+    Hitbox* hitbox = registry.try_get<Hitbox>(entity);
+    Transform new_transform = transform;
+    new_transform.rect.x += xd;
+    new_transform.rect.y += yd;
+    if(hitbox == nullptr){
+        transform = new_transform;
+    }
+
+    else{
+        bool col = false;
+        registry.view<Transform, Hitbox>().each([entity, new_transform, &col, this](entt::entity e2, Transform& t2, Hitbox& h2){
+            if(entity != e2){
+                if(new_transform.rect.x +  new_transform.rect.w > t2.rect.x && new_transform.rect.x < t2.rect.x + t2.rect.w){
+                    if(new_transform.rect.y +  new_transform.rect.h > t2.rect.y && new_transform.rect.y < t2.rect.y + t2.rect.h){
+                        col = true;
+                        Movement* movement = registry.try_get<Movement>(entity);
+                        if(movement != nullptr){
+                            movement->velocity_x /= 2;
+                            movement->velocity_y /= 2; 
+                        }
+                    }
+                }
             }
         });
-    });
-    return collide;
-}
-void PhysicsEngine::move(entt::entity entity, int xd, int yd){
-    Transform& transform = registry.get<Transform>(entity);
-    Transform old_transform = transform;
-    transform.rect.x += xd;
-    transform.rect.y += yd;
-    bool collision_result = update_collision();
-    if (collision_result){
-        transform = old_transform; // undo the movement if movement results in collision 
+        if(!col){
+            transform = new_transform;
+        }        
     }
 }
-
-
-
-
-bool PhysicsEngine::check_collision(entt::entity e1, entt::entity e2){
-    Transform& t1 = registry.get<Transform>(e1);
-    Transform& t2 = registry.get<Transform>(e2);
-    if((t1.rect.x + t1.rect.w > t2.rect.x) && (t1.rect.x < t2.rect.x + t2.rect.w)){
-        if((t1.rect.y + t1.rect.h > t2.rect.y) && (t1.rect.y < t2.rect.y + t2.rect.h)){
-            return true;
-        }
-    }
-    return false;
-}
-
