@@ -4,9 +4,12 @@
 #include "EntityComponents/Rendering/Animations.h"
 #include "EntityComponents/Controllers/PlayerController.h"
 #include "EntityComponents/Physics/Hitbox.h"
+#include "EntityComponents/Physics/Movement.h"
 #include "TextureManager.hpp"
 
-ECSManager::ECSManager() : physics(registry){}
+ECSManager::ECSManager() : physics(registry){
+    //registry.on_construct<Hitbox>().connect<&entt::registry::emplace_or_replace<Movement>>();
+}
 
 void ECSManager::update(){
     registry.view<Transform>(entt::exclude<Texture>).each([](auto entity, Transform& transform){
@@ -47,21 +50,6 @@ void ECSManager::update(){
         }
         if (keys[SDL_SCANCODE_SPACE] && !controller.is_jumping){
             controller.is_jumping = true;
-        }
-        if (controller.is_jumping){
-            unsigned jumphalf = controller.jump_lenght / 2;
-            if (controller.jumped_lenght < jumphalf){
-                controller.jumped_lenght++;
-                physics.move(entity, 0, controller.force * -1);
-            }
-            else{
-                controller.jumped_lenght++;
-                physics.move(entity, 0, controller.force * 1);
-            }
-            if (controller.jumped_lenght >= controller.jump_lenght){
-                controller.is_jumping = false;
-                controller.jumped_lenght = 0;
-            }
         }
         
     });
