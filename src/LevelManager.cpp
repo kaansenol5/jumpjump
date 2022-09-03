@@ -28,11 +28,9 @@ void LevelManager::load_level_one(){
     registry -> emplace<Movement>(player);
     
     entt::entity box = registry -> create();
-    SDL_Rect box_dimensions = {400, 410, 40, 40};
+    SDL_Rect box_dimensions = {0, 900, 4000, 10};
     registry->emplace<Transform>(box, box_dimensions);
     registry->emplace<Hitbox>(box, false);
-    registry->emplace<Movement>(box);
-    registry -> emplace<Core>(box);
 }
 
 void LevelManager::reset(){

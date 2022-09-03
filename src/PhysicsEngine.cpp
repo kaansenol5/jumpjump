@@ -11,10 +11,14 @@ PhysicsEngine::PhysicsEngine(entt::registry& registry) : registry(registry){}
 void PhysicsEngine::update_movements(){
     registry.view<Core, Movement, Transform>().each([this](entt::entity entity, Core& core, Movement& movement, Transform& transform){
         if(core.gravity){
-          //  core.total_force_y += core.mass * gravity;
+            if(core.total_force_y < core.max_force){
+                core.total_force_y += core.mass * core.gravity;
+            }
         }
         movement.acceleration_x = core.total_force_x / core.mass;
         movement.acceleration_y = core.total_force_y / core.mass;
+        OnScreenDebugger::print("force_y: " + std::to_string(core.total_force_y));
+        OnScreenDebugger::print("vel_y: " + std::to_string(movement.velocity_y));
         if(abs(movement.velocity_x + movement.acceleration_x) <= movement.max_velocity){
             movement.velocity_x += movement.acceleration_x;
         }
@@ -54,7 +58,8 @@ void PhysicsEngine::update_movements(){
                 core.total_force_y -= friction;
             }
         }
-        move(entity, movement.velocity_x, movement.velocity_y);
+        move(entity, 0, movement.velocity_y);
+        move(entity, movement.velocity_x, 0);
     });
     
 }
@@ -86,10 +91,11 @@ void PhysicsEngine::move(entt::entity entity, int xd, int yd){
                 if(new_transform.rect.x +  new_transform.rect.w > t2.rect.x && new_transform.rect.x < t2.rect.x + t2.rect.w){
                     if(new_transform.rect.y +  new_transform.rect.h > t2.rect.y && new_transform.rect.y < t2.rect.y + t2.rect.h){
                         col = true;
+                        OnScreenDebugger::print("COLLISION");
                         Movement* movement = registry.try_get<Movement>(entity);
                         if(movement != nullptr){
-                            movement->velocity_x /= 2;
-                            movement->velocity_y /= 2; 
+                            movement->velocity_x / 2;
+                            movement->velocity_y / 2;
                         }
                     }
                 }
@@ -100,3 +106,4 @@ void PhysicsEngine::move(entt::entity entity, int xd, int yd){
         }        
     }
 }
+
