@@ -9,6 +9,7 @@ public:
     void jump(entt::entity entity, int force);
 private:
     void move(entt::entity entity, int xd, int yd);
+    void scroll(int xd, int yd);
     bool check_col(entt::entity entity, Transform new_transform);
     int gravity = 1;
     float friction = .7f;

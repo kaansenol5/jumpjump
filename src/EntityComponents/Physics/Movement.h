@@ -1,5 +1,6 @@
 struct Movement
 {
+    bool always_in_screen = false;
     float velocity_x = 0.0f;
     float velocity_y = 0.0f;
     float max_velocity = 25.0f;

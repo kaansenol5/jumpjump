@@ -5,6 +5,7 @@
 #include "EntityComponents/Physics/Movement.h"
 #include "OnScreenDebugger.hpp"
 #include <iostream>
+#include "TextureManager.hpp"
 
 PhysicsEngine::PhysicsEngine(entt::registry& registry) : registry(registry){}
 
@@ -25,6 +26,16 @@ void PhysicsEngine::update_movements(){
         move(entity, movement.velocity_x, 0);
         if(abs(movement.velocity_y + movement.acceleration_y) <= movement.max_velocity){
             movement.velocity_y += movement.acceleration_y;
+        }
+        if(movement.always_in_screen){
+            int w, h;
+            TextureManager::GetWindowSize(w, h);
+            if(transform.rect.x < 100){
+                scroll(movement.velocity_x * -1, 0);
+            }
+            if(transform.rect.x > w - 100){
+                scroll(movement.velocity_x * -1, 0);
+            }
         }
         move(entity, 0, movement.velocity_y);
         if(movement.velocity_x != 0){
@@ -132,4 +143,11 @@ bool PhysicsEngine::check_col(entt::entity entity, Transform new_transform){
             }
         });
     return col;
+}
+
+void PhysicsEngine::scroll(int xd, int yd){
+    registry.view<Transform>().each([xd, yd](entt::entity entity, Transform& transform){
+        transform.rect.x += xd;
+        transform.rect.y += yd;
+    });
 }
