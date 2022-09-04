@@ -119,6 +119,9 @@ public:
   static inline void present(){
       SDL_RenderPresent(renderer);
   }
+  static inline void GetWindowSize(int& width, int& height){
+        SDL_GetWindowSize(window, &width, &height);
+  }
 private:
     static SDL_Window* window;
     static SDL_Renderer* renderer;

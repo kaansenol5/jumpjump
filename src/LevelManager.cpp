@@ -27,7 +27,7 @@ void LevelManager::load_level_one(){
     registry -> emplace<Core>(player);
     registry -> emplace<Movement>(player);    
     entt::entity ground = registry -> create();
-    SDL_Rect ground_dimensions = {-1000, 900, 4000, 32};
+    SDL_Rect ground_dimensions = {-1000, 900, 4000, 320};
     registry->emplace<Transform>(ground, ground_dimensions, true, 29, 161, 0, 255);
     registry->emplace<Hitbox>(ground);
     SDL_Texture* grass_texture = TextureManager::load_image("assets/grass.png");
