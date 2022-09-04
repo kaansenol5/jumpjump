@@ -49,7 +49,7 @@ void ECSManager::update(){
             physics.add_force(entity, controller.force * 1, 0);
         }
         if (keys[SDL_SCANCODE_SPACE]){
-            physics.add_force(entity, 0, -30);
+            physics.jump(entity, -60);
         }
         
     });

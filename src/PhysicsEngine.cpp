@@ -74,6 +74,16 @@ void PhysicsEngine::add_force(entt::entity entity, int xd, int yd, bool ignore_l
     }
 }
 
+
+void PhysicsEngine::jump(entt::entity entity, int force){
+    Core& core = registry.get<Core>(entity);
+    Hitbox* hitbox = registry.try_get<Hitbox>(entity);
+    if(hitbox != nullptr && !hitbox->is_colliding){
+        return;
+    }
+    core.total_force_y += force;
+}
+
 void PhysicsEngine::move(entt::entity entity, int xd, int yd){ 
     Transform& transform = registry.get<Transform>(entity);
     Hitbox* hitbox = registry.try_get<Hitbox>(entity);
@@ -87,6 +97,7 @@ void PhysicsEngine::move(entt::entity entity, int xd, int yd){
     else{
         bool col = false;
         col = check_col(entity, new_transform);
+        int i = 0;
         while(col){
             xd /= 2;
             yd /= 2;
@@ -94,7 +105,13 @@ void PhysicsEngine::move(entt::entity entity, int xd, int yd){
             new_transform.rect.x += xd;
             new_transform.rect.y += yd;
             col = check_col(entity, new_transform);
+            if(i == 4){
+                col = true;
+                break;
+            }
+            i++;
         }
+        hitbox->is_colliding = col;
         if(!col){
             transform = new_transform;
         }        
@@ -109,7 +126,7 @@ bool PhysicsEngine::check_col(entt::entity entity, Transform new_transform){
                 if(new_transform.rect.x +  new_transform.rect.w > t2.rect.x && new_transform.rect.x < t2.rect.x + t2.rect.w){
                     if(new_transform.rect.y +  new_transform.rect.h > t2.rect.y && new_transform.rect.y < t2.rect.y + t2.rect.h){
                         col = true;
-                        OnScreenDebugger::print("COLLISION");
+                        
                     }
                 }
             }
