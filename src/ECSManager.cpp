@@ -48,8 +48,8 @@ void ECSManager::update(){
         if (keys[SDL_SCANCODE_D]){
             physics.add_force(entity, controller.force * 1, 0);
         }
-        if (keys[SDL_SCANCODE_SPACE] && !controller.is_jumping){
-            controller.is_jumping = true;
+        if (keys[SDL_SCANCODE_SPACE]){
+            physics.add_force(entity, 0, -30);
         }
         
     });
