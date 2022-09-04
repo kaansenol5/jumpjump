@@ -77,6 +77,9 @@ public:
         if(dest->x >= 0 && dest->x <= width && dest->y >= 0 && dest->y <= height){
             return true;
         }
+        if(dest->w + dest->x > 0 || dest->h + dest->y > 0){
+            return true;
+        }
         else{
             return false;
         }
@@ -108,7 +111,7 @@ public:
         }
   }
 
-  static inline void clear(unsigned char r = 0, unsigned char b = 0, unsigned char g = 0, unsigned char a = 255){
+  static inline void clear(unsigned char r = 0, unsigned char g = 0, unsigned char b = 0, unsigned char a = 255){
       SDL_SetRenderDrawColor(renderer, r, g, b, a);
       SDL_RenderClear(renderer);
   }
