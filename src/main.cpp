@@ -48,7 +48,7 @@ int main(int argc, char* argv[]){
             break;
         }
         OnScreenDebugger::refresh();
-        TextureManager::clear(0, 255, 0, 255);
+        TextureManager::clear(112, 153, 255, 255);
         ecs_manager.update();
         OnScreenDebugger::draw();
         frame_time = SDL_GetTicks() - frame_start;
