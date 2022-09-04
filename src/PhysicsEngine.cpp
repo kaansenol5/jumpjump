@@ -22,9 +22,11 @@ void PhysicsEngine::update_movements(){
         if(abs(movement.velocity_x + movement.acceleration_x) <= movement.max_velocity){
             movement.velocity_x += movement.acceleration_x;
         }
+        move(entity, movement.velocity_x, 0);
         if(abs(movement.velocity_y + movement.acceleration_y) <= movement.max_velocity){
             movement.velocity_y += movement.acceleration_y;
         }
+        move(entity, 0, movement.velocity_y);
         if(movement.velocity_x != 0){
             if(movement.velocity_x < 0){
                 movement.velocity_x += friction;
@@ -58,18 +60,16 @@ void PhysicsEngine::update_movements(){
                 core.total_force_y -= friction;
             }
         }
-        move(entity, 0, movement.velocity_y);
-        move(entity, movement.velocity_x, 0);
     });
     
 }
 
-void PhysicsEngine::add_force(entt::entity entity, int xd, int yd){
+void PhysicsEngine::add_force(entt::entity entity, int xd, int yd, bool ignore_limit){
     Core& core = registry.get<Core>(entity);
-    if(abs(core.total_force_x + xd) <= core.max_force){
+    if(abs(core.total_force_x + xd) <= core.max_force || ignore_limit){
         core.total_force_x += xd;
     }
-    if(abs(core.total_force_y + yd) <= core.max_force){
+    if(abs(core.total_force_y + yd) <= core.max_force || ignore_limit){
         core.total_force_y += yd;
     }
 }
@@ -86,24 +86,33 @@ void PhysicsEngine::move(entt::entity entity, int xd, int yd){
 
     else{
         bool col = false;
-        registry.view<Transform, Hitbox>().each([entity, new_transform, &col, this](entt::entity e2, Transform& t2, Hitbox& h2){
-            if(entity != e2){
-                if(new_transform.rect.x +  new_transform.rect.w > t2.rect.x && new_transform.rect.x < t2.rect.x + t2.rect.w){
-                    if(new_transform.rect.y +  new_transform.rect.h > t2.rect.y && new_transform.rect.y < t2.rect.y + t2.rect.h){
-                        col = true;
-                        OnScreenDebugger::print("COLLISION");
-                        Movement* movement = registry.try_get<Movement>(entity);
-                        if(movement != nullptr){
-                            movement->velocity_x / 2;
-                            movement->velocity_y / 2;
-                        }
-                    }
-                }
-            }
-        });
+        col = check_col(entity, new_transform);
+        while(col){
+            xd /= 2;
+            yd /= 2;
+            new_transform = transform;
+            new_transform.rect.x += xd;
+            new_transform.rect.y += yd;
+            col = check_col(entity, new_transform);
+        }
         if(!col){
             transform = new_transform;
         }        
     }
 }
 
+
+bool PhysicsEngine::check_col(entt::entity entity, Transform new_transform){
+    bool col = false;
+    registry.view<Transform, Hitbox>().each([entity, new_transform, &col, this](entt::entity e2, Transform& t2, Hitbox& h2){
+            if(entity != e2){
+                if(new_transform.rect.x +  new_transform.rect.w > t2.rect.x && new_transform.rect.x < t2.rect.x + t2.rect.w){
+                    if(new_transform.rect.y +  new_transform.rect.h > t2.rect.y && new_transform.rect.y < t2.rect.y + t2.rect.h){
+                        col = true;
+                        OnScreenDebugger::print("COLLISION");
+                    }
+                }
+            }
+        });
+    return col;
+}
