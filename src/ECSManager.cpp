@@ -2,6 +2,7 @@
 #include "EntityComponents/Rendering/Texture.h"
 #include "EntityComponents/Rendering/Transform.h"
 #include "EntityComponents/Rendering/Animations.h"
+#include "EntityComponents/Rendering/RepeatingTexture.h"
 #include "EntityComponents/Controllers/PlayerController.h"
 #include "EntityComponents/Physics/Hitbox.h"
 #include "EntityComponents/Physics/Movement.h"
@@ -29,8 +30,20 @@ void ECSManager::update(){
         }
     });
     
-    registry.view<Transform, Texture>().each([](auto entity, Transform& transform, Texture& texture){
+    registry.view<Transform, Texture>(entt::exclude<RepeatingTexture>).each([](auto entity, Transform& transform, Texture& texture){
         TextureManager::render(texture.texture, &texture.source_rect, &transform.rect);
+    });
+    registry.view<Transform, RepeatingTexture, Texture>().each([](auto entity, Transform& transform, RepeatingTexture& repeating_texture, Texture& texture){
+        int width;
+        int height;
+        width = transform.rect.w / texture.source_rect.w;
+        height = transform.rect.h / texture.source_rect.h;
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < height; j++){
+                SDL_Rect dest_rect = {i * texture.source_rect.w + transform.rect.x, j * texture.source_rect.h + transform.rect.y, texture.source_rect.w, texture.source_rect.h};
+                TextureManager::render(texture.texture, &texture.source_rect, &dest_rect);
+            }
+        }
     });
 
 
