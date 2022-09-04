@@ -11,5 +11,5 @@ private:
     void move(entt::entity entity, int xd, int yd);
     bool check_col(entt::entity entity, Transform new_transform);
     int gravity = 1;
-    float friction = .5f;
+    float friction = .7f;
     entt::registry& registry;};
